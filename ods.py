@@ -151,8 +151,7 @@ def anaylize_video(video_path):
         image_np_expanded = np.expand_dims(image_np, axis=0)
         # Actual detection.
         start_time = time.time()
-        output_dict = run_inference_for_single_image(image_np, detection_graph)
-        print(output_dict)
+        output_dict = run_inference_for_single_image(image_np, detection_graph)        
         elapsed_time = time.time() - start_time
         print('inference time cost: {}'.format(elapsed_time))
         # Visualization of the results of a detection.
