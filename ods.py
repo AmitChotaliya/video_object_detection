@@ -129,29 +129,33 @@ def run_inference_for_single_image(image, graph):
         output_dict['detection_masks'] = output_dict['detection_masks'][0]
   return output_dict
 
+#https://stackoverflow.com/questions/10559035/how-to-rotate-a-video-with-opencv
+
 def anaylize_video(video_path):
     cap = cv2.VideoCapture(video_path)
     out = None
     length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    print(f'Total Frames = {length}')
+    previousFrame = None
+    print('Total Frames = '+str(length))
 
     while length:
         length -= 1
-        print(f'Processing Frame = {length}')
+        print('Processing Frame = '+str(length))
         ret, image = cap.read()
         if ret == 0:
             break
 
         if out is None:
-            [h, w] = image.shape[:2]            
+            [h, w] = image.shape[:2]
             out = cv2.VideoWriter("/tmp/"+os.path.splitext(os.path.basename(file_id))[0]+".avi", 0, 25.0, (w, h))
+
 
         image_np = image
         # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
         image_np_expanded = np.expand_dims(image_np, axis=0)
         # Actual detection.
         start_time = time.time()
-        output_dict = run_inference_for_single_image(image_np, detection_graph)        
+        output_dict = run_inference_for_single_image(image_np, detection_graph)
         elapsed_time = time.time() - start_time
         print('inference time cost: {}'.format(elapsed_time))
         # Visualization of the results of a detection.
@@ -163,7 +167,7 @@ def anaylize_video(video_path):
             category_index,
             instance_masks=output_dict.get('detection_masks'),
             use_normalized_coordinates=True,
-            line_thickness=8)        
+            line_thickness=8)
         out.write(image_np)
     print("Closing everything")
     cap.release()
