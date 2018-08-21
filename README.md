@@ -2,6 +2,14 @@
 
 **Note: I am using Ubuntu 16.04 LTS OS on 64 bit machine and without any GPU.**
 
+* Python 3.6 installation.
+
+```bash
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt-get update
+sudo apt-get install python3.6
+```
+
 * Clone TensorFlow Object detection repository.
 
 ```bash
@@ -21,7 +29,7 @@ pip3 install virtualenv
 
 ```bash
 cd ~/video_object_detection
-virtualenv -p python3 .
+virtualenv -p python3.6 .
 source bin/activate
 ```
 
@@ -44,6 +52,7 @@ unzip protobuf.zip
 # From tensorflow/models/research/
 ./bin/protoc object_detection/protos/*.proto --python_out=.
 pip install opencv-python
+sudo apt-get install ffmpeg x264 x265 libx264-dev libx265-dev
 ```
 
 * Copy the ods.py in object_detection module
