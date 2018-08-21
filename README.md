@@ -37,6 +37,7 @@ pip install jupyter
 pip install matplotlib
 pip install pillow
 pip install lxml
+pip install ffmpeg-python
 cd models/research
 wget -O protobuf.zip https://github.com/google/protobuf/releases/download/v3.6.1/protoc-3.6.1-linux-x86_64.zip
 unzip protobuf.zip

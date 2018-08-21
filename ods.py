@@ -9,6 +9,7 @@ import six.moves.urllib as urllib
 import sys
 import tarfile
 import tensorflow as tf
+import ffmpeg
 import zipfile
 
 from collections import defaultdict
@@ -133,6 +134,7 @@ def run_inference_for_single_image(image, graph):
 
 def anaylize_video(video_path):
     cap = cv2.VideoCapture(video_path)
+    output_file_path = "/tmp/"+os.path.splitext(os.path.basename(video_path))[0]+".avi"
     out = None
     length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     previousFrame = None
@@ -147,7 +149,7 @@ def anaylize_video(video_path):
 
         if out is None:
             [h, w] = image.shape[:2]
-            out = cv2.VideoWriter("/tmp/"+os.path.splitext(os.path.basename(file_id))[0]+".avi", 0, 25.0, (w, h))
+            out = cv2.VideoWriter(output_file_path, 0, 25.0, (w, h))
 
 
         image_np = image
@@ -172,6 +174,26 @@ def anaylize_video(video_path):
     print("Closing everything")
     cap.release()
     out.release()
+    return output_file_path
+
+
+def convert_video(avi_file, source_file_path):
+    source_file_dir = os.path.dirname(source_file_path)
+    source_file_name = os.path.splitext(os.path.basename(source_file_path))[0]
+    final_file_path = source_file_dir + "/" + source_file_name + ".mp4"
+    stream = ffmpeg.input(avi_file)
+    # stream = ffmpeg.output(stream, source_file_dir+"/"+source_file_name+".mp4", vcodec='libx264', metadata='s:v rotate="0"', vf="transpose=3", crf=23, acodec="copy")
+    stream = ffmpeg.output(stream, final_file_path, vcodec='libx264', crf=23, acodec="copy")
+    stream = ffmpeg.overwrite_output(stream)
+    ffmpeg.run(stream)
+    return final_file_path
+
+def do_cleanup(avi_file, source_file):
+    try:
+        os.remove(avi_file)
+        os.remove(source_file)
+    except OSError:
+        pass
 
 if __name__ == "__main__":
     import sys
@@ -184,6 +206,7 @@ if __name__ == "__main__":
     	file_id = int(sys.argv[1])
     except:
     	file_id = sys.argv[1]
+
     file_name = os.path.basename(file_id)
-    print(os.path.splitext(os.path.basename(file_id))[0])
-    anaylize_video(file_id)
+    output_file = anaylize_video(file_id)
+    final_file_path = convert_video(output_file, file_id)
