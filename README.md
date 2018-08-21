@@ -21,7 +21,7 @@ pip3 install virtualenv
 
 ```bash
 cd ~/video_object_detection
-python3 -m venv .
+virtualenv -p python3 .
 source bin/activate
 ```
 
@@ -29,13 +29,35 @@ source bin/activate
 
 ```bash
 pip install -r requirements.txt
+pip install tensorflow
+sudo apt-get install protobuf-compiler python-pil python-lxml python-tk
+pip install Cython
+pip install contextlib2
+pip install jupyter
+pip install matplotlib
+pip install pillow
+pip install lxml
+cd models/research
+wget -O protobuf.zip https://github.com/google/protobuf/releases/download/v3.6.1/protoc-3.6.1-linux-x86_64.zip
+unzip protobuf.zip
+# From tensorflow/models/research/
+./bin/protoc object_detection/protos/*.proto --python_out=.
+pip install opencv-python
 ```
+
+* Copy the ods.py in object_detection module
+
+```bash
+cp ods.py models/research/object_detection/
+```
+
 
 # Usage
 
 * Run the following command with first argument as mp4 file path.
 
 ```bash
+cd models/research/object_detection/
 python ods.py /tmp/test2.mp4
 ```
 * It will process the video and store the processed avi in `/tmp` directory
