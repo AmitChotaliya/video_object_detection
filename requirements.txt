@@ -3,10 +3,13 @@ astor==0.7.1
 astroid==2.0.4
 backcall==0.1.0
 bleach==2.1.3
+contextlib2==0.5.5
 cycler==0.10.0
 Cython==0.28.5
 decorator==4.3.0
 entrypoints==0.2.3
+ffmpeg-python==0.1.16
+future==0.16.0
 gast==0.2.0
 grpcio==1.14.1
 html5lib==1.0.1
@@ -24,6 +27,7 @@ jupyter-console==5.2.0
 jupyter-core==4.4.0
 kiwisolver==1.0.1
 lazy-object-proxy==1.3.1
+lxml==4.2.4
 Markdown==2.6.11
 MarkupSafe==1.0
 matplotlib==2.2.2
@@ -43,9 +47,7 @@ prometheus-client==0.3.1
 prompt-toolkit==1.0.15
 protobuf==3.6.0
 ptyprocess==0.6.0
-pycocotools==2.0
 Pygments==2.2.0
-pylint==2.1.1
 pyparsing==2.2.0
 python-dateutil==2.7.3
 pytz==2018.5
@@ -67,5 +69,3 @@ webencodings==0.5.1
 Werkzeug==0.14.1
 widgetsnbextension==3.4.0
 wrapt==1.10.11
-pyee==5.0.0
-python-ffmpeg==1.0.5
