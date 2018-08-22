@@ -195,17 +195,34 @@ def do_cleanup(avi_file, source_file):
     except OSError:
         pass
 
+
+
+def find_avi(dir):
+    for root, dirs, files in os.walk(dir):
+        for file in files:
+            if file.endswith(".avi"):
+                file_path = os.path.join(root, file)
+                return file_path, root
+
+def lock_file(file_path):
+    file_name = os.path.splitext(os.path.basename(file_path))[0]
+    source_file_dir = os.path.dirname(file_path)
+    locked_file_path = source_file_dir+"/"+file_name+".lock"
+    os.rename(file_path, locked_file_path)
+    return locked_file_path
+
 if __name__ == "__main__":
     import sys
-    if len(sys.argv) != 2:
-        print ("usage:%s (cameraID | filename) Detect faces\
- in the video example:%s 0"%(sys.argv[0], sys.argv[0]))
-        exit(1)
 
     try:
-    	file_id = int(sys.argv[1])
-    except:
-    	file_id = sys.argv[1]
+        file_id = sys.argv[1]
+    except OSError:
+        pass
+
+
+    if not file_id:
+        file_id, root = find_avi('/data/video-share/media')
+        file_id = lock_file(file_id)
 
     file_name = os.path.basename(file_id)
     output_file = anaylize_video(file_id)
