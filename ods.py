@@ -137,6 +137,8 @@ def anaylize_video(video_path):
     output_file_path = "/tmp/"+os.path.splitext(os.path.basename(video_path))[0]+".avi"
     out = None
     length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    org_fps = cap.get(cv2.CAP_PROP_FPS)
+    length2 = length
     previousFrame = None
     print('Total Frames = '+str(length))
 
@@ -149,7 +151,8 @@ def anaylize_video(video_path):
 
         if out is None:
             [h, w] = image.shape[:2]
-            out = cv2.VideoWriter(output_file_path, 0, 25.0, (w, h))
+            out = cv2.VideoWriter(output_file_path, 0, org_fps, (w, h))
+
 
 
         image_np = image
@@ -203,6 +206,7 @@ def find_avi(dir):
             if file.endswith(".avi"):
                 file_path = os.path.join(root, file)
                 return file_path, root
+    return None, None
 
 def lock_file(file_path):
     file_name = os.path.splitext(os.path.basename(file_path))[0]
@@ -211,19 +215,47 @@ def lock_file(file_path):
     os.rename(file_path, locked_file_path)
     return locked_file_path
 
+def get_running_ods_procs():
+  import subprocess
+  count = 0
+  try:
+      output = subprocess.check_output("pgrep -cf ods.py",shell=True,stderr=subprocess.STDOUT)
+      count = int(output.rstrip())
+      print("Runnin procs are = "+str(count))
+      return count
+  except subprocess.CalledProcessError as e:
+      raise RuntimeError("command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))
+  return count
+
 if __name__ == "__main__":
     import sys
+    import subprocess
+    file_id = None
+    org_file = None
+
+    current_proc_count = get_running_ods_procs()
+    print("Running processes"+str(current_proc_count))
+    if current_proc_count > 2:
+        print("Max number of processes already running")
+        exit()
 
     try:
         file_id = sys.argv[1]
-    except OSError:
+    except IndexError:
         pass
 
 
     if not file_id:
         file_id, root = find_avi('/data/video-share/media')
+        org_file = file_id
+        if not file_id:
+           print("No pending files found")
+           exit()
+        print("Found file "+file_id)
         file_id = lock_file(file_id)
+        print("Locked file ID = "+file_id)
 
     file_name = os.path.basename(file_id)
     output_file = anaylize_video(file_id)
     final_file_path = convert_video(output_file, file_id)
+    do_cleanup(file_id, output_file)    
